@@ -2,12 +2,12 @@
 import IPhone from '@/components/IPhone';
 import Lights from '@/components/Lights';
 import CanvasLoader from '@/components/Loader';
+import { yellowImg } from '@/lib/constants';
 // import CanvasPort from '@/components/CanvasPort'
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei'; // useful utilities for 3D control
 import { Canvas } from '@react-three/fiber';
 import { Suspense, useRef, useState } from 'react';
 
-import { yellowImg } from '@/lib/utils';
 import * as THREE from 'three';
 
 
