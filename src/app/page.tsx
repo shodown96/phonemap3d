@@ -1,101 +1,125 @@
-import Image from "next/image";
+"use client"
+import { UploadFileInput } from '@/components/custom/UploadFileInput';
+import IPhone from '@/components/IPhone';
+import Lights from '@/components/Lights';
+import CanvasLoader from '@/components/Loader';
+import { Button } from '@/components/ui/button';
+import { yellowImg } from '@/lib/constants';
+import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import html2canvas from 'html2canvas';
+import { Camera } from 'lucide-react';
+import { Suspense, useEffect, useRef, useState } from 'react';
+import * as THREE from 'three';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const groupRef = useRef(new THREE.Group());
+  const [files, setFiles] = useState<File[]>([]);
+  const [model, setModel] = useState({
+    title: 'iPhone 15 Pro in Natural Titanium',
+    color: ['#8F8A81', '#FFE7B9', '#6F6C64'],
+    img: yellowImg,
+  })
+  const mapImageToPhone = () => {
+    try {
+      const objectUrl = URL.revokeObjectURL(model.img);
+    } catch (error) {
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    }
+    const file = files[0];
+    const objectUrl = URL.createObjectURL(file);
+    setModel({
+      ...model,
+      img: objectUrl
+    })
+  }
+  const handleDownloadImage = async () => {
+    const element = document.getElementById('print');
+    if (element) {
+      const canvas = await html2canvas(element);
+      const data = canvas.toDataURL('image/jpg');
+      const link = document.createElement('a');
+
+      link.href = data;
+      link.download = 'downloaded-image.jpg';
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+  };
+  useEffect(() => {
+    return () => URL.revokeObjectURL(model.img);
+  }, [])
+
+  return (
+    <div className="h-screen grid grid-cols-12">
+      <div className="col-span-6 bg-scene bg-center bg-cover">
+        <Canvas>
+          <ambientLight intensity={0.3} />
+          <PerspectiveCamera makeDefault position={[0, 0, 4]} />
+          <Lights />
+
+          <OrbitControls
+            // makeDefault
+            // ref={controlRef}
+            // enableZoom={false}
+            // enablePan={false}
+            // rotateSpeed={0.4}
+            maxPolarAngle={Math.PI / 2}
+          // target={new THREE.Vector3(0, 0, 0)}
+          // onEnd={() => setRotationState(controlRef.current.getAzimuthalAngle())}
+          />
+
+          <group ref={groupRef} name={"large"} position={[0, 0, 0]}>
+            <Suspense fallback={<CanvasLoader />}>
+              <IPhone
+                scale={[15, 15, 15]}
+                item={model}
+                size={"large"}
+              />
+            </Suspense>
+          </group>
+        </Canvas>
+      </div>
+      <div className='col-span-6 bg-white'>
+
+        <div className='flex flex-col gap-2 p-5'>
+          <h4 className='text-3xl font-bold'>PhoneMap3D</h4>
+          <p>
+            Upload an image that matches the display dimensions of the iPhone 15 Pro Max (1290 x 2796 pixels) to ensure a perfect fit for showcasing on the 3D model.{" "}
+            <b>Click and drag the phone for rotation.</b>
+          </p>
+          <UploadFileInput
+            files={files}
+            dropzoneOptions={{
+              multiple: false,
+              maxSize: 1024 * 1024 * 4,
+              accept: {
+                'image/jpeg': [],
+                'image/png': []
+              },
+            }}
+            setFiles={values => {
+              if (!values) return;
+              setFiles(values)
+            }} />
+          <Button
+            disabled={!files.length}
+            onClick={mapImageToPhone}>
+            Map image to iPhone
+          </Button>
+          <Button
+            className='gap-1 items-center'
+            disabled={!files.length}
+            onClick={handleDownloadImage}>
+            <Camera /> <span>Take a screenshot</span>
+          </Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
 }
+// TODO: compress image or resize or crop image to fit texture
+// Make it render videos and record?
