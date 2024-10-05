@@ -63,7 +63,7 @@ export const UploadFileInput = ({
                     <FileSvgDraw />
                 </div>
             </FileInput>
-            <FileUploaderContent className="h-20 overflow-y-auto">
+            <FileUploaderContent className="min-h-5 overflow-y-auto">
                 {files.length ? files.map((file: File, i: number) => (
                     <FileUploaderItem key={i} index={i}>
                         <Paperclip className="h-4 w-4 stroke-current" />
