@@ -34,7 +34,7 @@ export default function Home() {
     })
   }
   const handleDownloadImage = async () => {
-    const element = document.getElementById('print');
+    const element = document.getElementById('3d-scene');
     if (element) {
       const canvas = await html2canvas(element);
       const data = canvas.toDataURL('image/jpg');
@@ -55,7 +55,7 @@ export default function Home() {
 
   return (
     <div className="h-screen grid grid-cols-12">
-      <div className="col-span-6 bg-scene bg-center bg-cover">
+      <div className="max-lg:col-span-12 col-span-6 bg-scene bg-center bg-cover" id="3d-scene">
         <Canvas>
           <ambientLight intensity={0.3} />
           <PerspectiveCamera makeDefault position={[0, 0, 4]} />
@@ -64,7 +64,7 @@ export default function Home() {
           <OrbitControls
             // makeDefault
             // ref={controlRef}
-            // enableZoom={false}
+            enableZoom={false}
             // enablePan={false}
             // rotateSpeed={0.4}
             maxPolarAngle={Math.PI / 2}
@@ -83,11 +83,11 @@ export default function Home() {
           </group>
         </Canvas>
       </div>
-      <div className='col-span-6 bg-white'>
+      <div className='max-lg:col-span-12 col-span-6 bg-white'>
 
-        <div className='flex flex-col gap-2 p-5'>
+        <div className='flex flex-col gap-2 p-10'>
           <h4 className='text-3xl font-bold'>PhoneMap3D</h4>
-          <p>
+          <p className='mb-4'>
             Upload an image that matches the display dimensions of the iPhone 15 Pro Max (1290 x 2796 pixels) to ensure a perfect fit for showcasing on the 3D model.{" "}
             <b>Click and drag the phone for rotation.</b>
           </p>
@@ -105,17 +105,19 @@ export default function Home() {
               if (!values) return;
               setFiles(values)
             }} />
-          <Button
-            disabled={!files.length}
-            onClick={mapImageToPhone}>
-            Map image to iPhone
-          </Button>
-          <Button
-            className='gap-1 items-center'
-            disabled={!files.length}
-            onClick={handleDownloadImage}>
-            <Camera /> <span>Take a screenshot</span>
-          </Button>
+          <div className="flex items-center gap-5">
+            <Button
+              disabled={!files.length}
+              onClick={mapImageToPhone}>
+              Map image to iPhone
+            </Button>
+            <Button
+              className='gap-1 items-center'
+              disabled={!files.length}
+              onClick={handleDownloadImage}>
+              <Camera /> <span>Take a screenshot</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
@@ -123,3 +125,4 @@ export default function Home() {
 }
 // TODO: compress image or resize or crop image to fit texture
 // Make it render videos and record?
+// screemshot
