@@ -22,9 +22,9 @@ export default function Home() {
   })
   const mapImageToPhone = () => {
     try {
-      const objectUrl = URL.revokeObjectURL(model.img);
+      URL.revokeObjectURL(model.img);
     } catch (error) {
-
+      // console.log(error)
     }
     const file = files[0];
     const objectUrl = URL.createObjectURL(file);
