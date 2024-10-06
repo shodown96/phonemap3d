@@ -55,7 +55,7 @@ export default function Home() {
 
   return (
     <div className="h-screen grid grid-cols-12">
-      <div className="max-lg:col-span-12 col-span-6 bg-scene bg-center bg-cover" id="3d-scene">
+      <div className="max-lg:col-span-12 col-span-6 bg-scene bg-center bg-cover min-h-[400px]" id="3d-scene">
         <Canvas>
           <ambientLight intensity={0.3} />
           <PerspectiveCamera makeDefault position={[0, 0, 4]} />
@@ -105,7 +105,7 @@ export default function Home() {
               if (!values) return;
               setFiles(values)
             }} />
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5 flex-wrap">
             <Button
               disabled={!files.length}
               onClick={mapImageToPhone}>
