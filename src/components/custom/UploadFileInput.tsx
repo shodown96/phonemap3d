@@ -8,6 +8,7 @@ import {
 
 import { Paperclip } from "lucide-react";
 import { DropzoneOptions } from "react-dropzone";
+import { cn } from "@/lib/utils";
 
 const FileSvgDraw = () => {
     return (
@@ -41,37 +42,50 @@ const FileSvgDraw = () => {
 export const UploadFileInput = ({
     files,
     setFiles,
+    label,
+    labelStyle,
+    containerClass,
     dropzoneOptions
 }: {
     files: File[],
     setFiles: (value: File[] | null) => void,
+    label?: string,
+    labelStyle?: string;
+    containerClass?: string;
     dropzoneOptions: DropzoneOptions
 }) => {
     return (
-        <FileUploader
-            value={files}
-            onValueChange={setFiles}
-            dropzoneOptions={dropzoneOptions}
-            className=""
-        >
-            <FileInput className="border">
-                {/* <Button variant={"outline"}>Upload a file</Button> */}
-                {/* <div className="flex items-center justify-center h-32 w-full border bg-background rounded-md">
+        <div className={containerClass}>
+            {label && (
+                <label className={cn("text-sm font-medium", labelStyle)}>
+                    {label}
+                </label>
+            )}
+            <FileUploader
+                value={files}
+                onValueChange={setFiles}
+                dropzoneOptions={dropzoneOptions}
+                className=""
+            >
+                <FileInput className="border">
+                    {/* <Button variant={"outline"}>Upload a file</Button> */}
+                    {/* <div className="flex items-center justify-center h-32 w-full border bg-background rounded-md">
                     <p className="text-gray-400">Drop files here</p>
                 </div> */}
-                <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
-                    <FileSvgDraw />
-                </div>
-            </FileInput>
-            <FileUploaderContent className="min-h-5 overflow-y-auto">
-                {files.length ? files.map((file: File, i: number) => (
-                    <FileUploaderItem key={i} index={i}>
-                        <Paperclip className="h-4 w-4 stroke-current" />
-                        <span>{file.name}</span>
-                    </FileUploaderItem>
-                )) : null}
-            </FileUploaderContent>
-        </FileUploader>
+                    <div className="flex items-center justify-center flex-col pt-3 pb-4 w-full ">
+                        <FileSvgDraw />
+                    </div>
+                </FileInput>
+                <FileUploaderContent className="min-h-5 overflow-y-auto">
+                    {files.length ? files.map((file: File, i: number) => (
+                        <FileUploaderItem key={i} index={i}>
+                            <Paperclip className="h-4 w-4 stroke-current" />
+                            <span>{file.name}</span>
+                        </FileUploaderItem>
+                    )) : null}
+                </FileUploaderContent>
+            </FileUploader>
+        </div>
     )
 }
 
